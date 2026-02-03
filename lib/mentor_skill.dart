@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:studybuddy/crtacc.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -216,7 +212,7 @@ class _EditSkillsScreenState extends State<EditSkillsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+            bottomNavigationBar: BottomNavigationBar(
         currentIndex: _bottomNavIndex,
         onTap: (index) {
           setState(() {
@@ -246,6 +242,7 @@ class _EditSkillsScreenState extends State<EditSkillsScreen> {
           ),
         ],
       ),
+
     );
   }
 }

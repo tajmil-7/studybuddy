@@ -63,6 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '724145259216',
     projectId: 'studybuddy-2045e',
     storageBucket: 'studybuddy-2045e.firebasestorage.app',
+    iosClientId: '724145259216-q986bhm50j4tleobiuatuiuvtcjku6r4.apps.googleusercontent.com',
     iosBundleId: 'com.example.studybuddy',
   );
 
@@ -72,6 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '724145259216',
     projectId: 'studybuddy-2045e',
     storageBucket: 'studybuddy-2045e.firebasestorage.app',
+    iosClientId: '724145259216-q986bhm50j4tleobiuatuiuvtcjku6r4.apps.googleusercontent.com',
     iosBundleId: 'com.example.studybuddy',
   );
 
@@ -83,4 +85,5 @@ class DefaultFirebaseOptions {
     authDomain: 'studybuddy-2045e.firebaseapp.com',
     storageBucket: 'studybuddy-2045e.firebasestorage.app',
   );
+
 }

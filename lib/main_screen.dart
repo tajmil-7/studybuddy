@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:studybuddy/StMlist.dart';
 import 'package:studybuddy/chatbot.dart';
 import 'package:studybuddy/home_page.dart';
-import 'package:studybuddy/mentor_list.dart';
-import 'package:studybuddy/mentor_profile.dart';
-import 'package:studybuddy/mentorpage.dart';
 import 'package:studybuddy/student_profile.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // List of pages corresponding to BottomNavigationBar items
   final List<Widget> _pages = [
     HomePage(),
-    MentorsListPage(),
+    SMentorsListPage(),
     ChatScreen(),
     StudentProfileApp(),
   ];

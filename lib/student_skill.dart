@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:studybuddy/crtacc.dart';
 import 'package:studybuddy/main.dart';
 
 class InterestsScreen extends StatefulWidget {

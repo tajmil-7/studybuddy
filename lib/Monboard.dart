@@ -3,9 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:studybuddy/crtacc.dart';
 import 'package:studybuddy/main.dart';
-import 'package:studybuddy/mentor_skill.dart';
-import 'package:studybuddy/mentorpage.dart';
-import 'package:studybuddy/student_skill.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class MOnboardingPage extends StatefulWidget {

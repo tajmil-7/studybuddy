@@ -1,86 +1,32 @@
+// StMlist.dart
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:studybuddy/mentor_profile.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:studybuddy/std_ment_prof.dart'; // Import for current user UID
 
-class MentorsListPage extends StatefulWidget {
-  const MentorsListPage({super.key});
-
-  @override
-  State<MentorsListPage> createState() => _MentorsListPageState();
-}
-
-class _MentorsListPageState extends State<MentorsListPage> {
-  int _selectedIndex = 1; // Set initial index to 1 for Mentors tab
-
-  // List of widgets to display for each navigation bar item
-  static final List<Widget> _pages = <Widget>[
-    const Text(
-      'Home Page',
-      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-    ),
-    _MentorsListContent(), // The content of the mentors list page
-    const Text(
-      'Booking Page',
-      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-    ),
-    const Text(
-      'Profile Page',
-      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-    ),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    // Handle navigation based on the selected index
-    if (index == 0) {
-      // Navigate to Home Page
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const Placeholder()),
-      );
-    } else if (index == 3) {
-      // Navigate to Mentor Profile Page (for the current user)
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => MentorProfilePage(
-                  mentorUid: user.uid,
-                  mentorData: {},
-                  isNavigatedFromMentorsList: true,
-                ),
-          ),
-        );
-      }
-    }
-  }
+class SMentorsListPage extends StatelessWidget {
+  const SMentorsListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // The Scaffold and BottomNavigationBar have been removed.
+    // This widget now only returns the content for the page.
     return Scaffold(
       appBar: AppBar(title: const Text('Mentors')),
-      body: _pages[_selectedIndex],
+      body: const _MentorsListContent(),
     );
   }
 }
 
-// Separate the list content into a new StatelessWidget
 class _MentorsListContent extends StatelessWidget {
+  const _MentorsListContent();
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream:
-          FirebaseFirestore.instance
-              .collection('users')
-              .where('role', isEqualTo: 'mentor')
-              .snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .where('role', isEqualTo: 'mentor')
+          .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -142,16 +88,14 @@ class _MentorsListContent extends StatelessWidget {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // Navigate to mentor profile
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder:
-                                (_) => LMentorProfilePage(
-                                  mentorUid: mentor.id,
-                                  mentorData: {},
-                                  isNavigatedFromMentorsList: true,
-                                ),
+                            builder: (_) => MentorProfilePage(
+                              mentorUid: mentor.id,
+                              isNavigatedFromMentorsList: true,
+                              mentorData: data,
+                            ),
                           ),
                         );
                       },

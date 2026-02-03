@@ -31,10 +31,46 @@
               "client_type": 3
             },
             {
-              "client_id": "724145259216-q986bhm50j4tleobiuatuiuvtcjku6r4.apps.googleusercontent.com",
+              "client_id": "724145259216-kurp2dfdoatr9pd7qt0j7vjoh6p25mjt.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.studybuddy"
+                "bundle_id": "com.example.studybuddyapp1"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724145259216:android:d29f6fc0f1efc249d694d5",
+        "android_client_info": {
+          "package_name": "com.example.studybuddyapp1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "724145259216-4g8fo5lb3vs90d1bsur3f1vmsojdacpo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7xkxSh6jRiYvEkMA4h449oAjZQRTdnv8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "724145259216-4g8fo5lb3vs90d1bsur3f1vmsojdacpo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "724145259216-kurp2dfdoatr9pd7qt0j7vjoh6p25mjt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.studybuddyapp1"
               }
             }
           ]

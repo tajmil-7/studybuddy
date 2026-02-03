@@ -1,105 +1,109 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:studybuddy/login_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+final db = FirebaseFirestore.instance;
+
+Future<List<Map<String, dynamic>>> mentorBuilder() async {
+  final querySnapshot = await db.collection("users").get();
+  List<Map<String, dynamic>> mentors = [];
+  for (var doc in querySnapshot.docs) {
+    if (doc["role"] == "mentor") {
+      mentors.add(doc.data());
+    }
+  }
+  return mentors;
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Home",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1E2A3A),
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.login_outlined, color: Color(0xFF1E2A3A)),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-              );
-            },
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Recommended Mentors Section
-              const Text(
-                "Recommended Mentors",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E2A3A),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Recommended Mentors Section
+                const Text(
+                  "Recommended Mentors",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E2A3A),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: 120,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    _buildMentorCard(
-                      'Sophia Carter',
-                      'Product Design',
-                      'https://picsum.photos/seed/sophia/200/200',
-                    ),
-                    const SizedBox(width: 16),
-                    _buildMentorCard(
-                      'Ethan Bennett',
-                      'Software Engineering',
-                      'https://picsum.photos/seed/ethan/200/200',
-                    ),
-                    const SizedBox(width: 16),
-                    _buildMentorCard(
-                      'Olivia Davis',
-                      'Data Science',
-                      'https://picsum.photos/seed/olivia/200/200',
-                    ),
-                  ],
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 120,
+                  child: FutureBuilder<List<Map<String, dynamic>>>(
+                    future: mentorBuilder(), // <-- call it here
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Text('No mentors found.');
+                      }
+
+                      final mentors = snapshot.data!;
+                      return ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: mentors.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 16),
+                        itemBuilder: (context, index) {
+                          final m = mentors[index];
+                          return _buildMentorCard(
+                            m['firstName'] ?? 'Unknown',
+                            m['subject'] ?? '',
+                            m['photoUrl'] ??
+                                'https://picsum.photos/seed/$index/200/200',
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              // Upcoming Appointments Section
-              const Text(
-                "Upcoming Appointments",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E2A3A),
+                const SizedBox(height: 24),
+                // Upcoming Appointments Section
+                const Text(
+                  "Upcoming Appointments",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E2A3A),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              _buildAppointmentCard(
-                'Mentorship Session with Liam Harper',
-                '10:00 AM - 11:00 AM',
-                'https://picsum.photos/seed/liam/200/200',
-              ),
-              const SizedBox(height: 24),
-              // Quick Access Section
-              const Text(
-                "Quick Access",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E2A3A),
+                const SizedBox(height: 16),
+                _buildAppointmentCard(
+                  'Mentorship Session with Liam Harper',
+                  '10:00 AM - 11:00 AM',
+                  'https://picsum.photos/seed/liam/200/200',
                 ),
-              ),
-              const SizedBox(height: 16),
-              _buildQuickAccessGrid(),
-            ],
+                const SizedBox(height: 24),
+                // Quick Access Section
+                const Text(
+                  "Quick Access",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E2A3A),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildQuickAccessGrid(),
+              ],
+            ),
           ),
         ),
       ),

@@ -143,7 +143,7 @@ class MentorCard extends StatelessWidget {
   final String domain;
   final String imageUrl;
 
-  const MentorCard({
+  const MentorCard({super.key, 
     required this.name,
     required this.domain,
     required this.imageUrl, required Map<String, dynamic> mentor,
@@ -192,7 +192,6 @@ class MentorCard extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {},
-            child: Text('View'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF13a4ec),
               foregroundColor: Colors.white,
@@ -200,6 +199,7 @@ class MentorCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
+            child: Text('View'),
           ),
         ],
       ),

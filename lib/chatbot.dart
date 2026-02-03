@@ -3,6 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:studybuddy/mentor_profile.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:studybuddy/main_screen.dart';
+import 'package:studybuddy/mentor_profile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // Main Chat Screen Widget
 class ChatScreen extends StatefulWidget {
@@ -46,6 +51,8 @@ class _ChatScreenState extends State<ChatScreen> {
         - If the query is a simple greeting or conversation, just chat naturally.
         - If the query is about a technical skill or an error, provide a concise solution or explanation.
         - Do not mention mentors or suggesting them in your response; that is handled separately by the application.
+        - Do not give any unecessary datas like jokes, weathers, etc
+        - suggest Mentors to student in which he/she has doubts.
       """),
     );
   }
@@ -271,7 +278,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       .map(
                                         (mentor) => MentorCard(mentor: mentor),
                                       )
-                                      .toList(),
+                                      ,
                                 ],
                               );
                             }
@@ -400,10 +407,6 @@ class MentorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final User? user = FirebaseAuth.instance.currentUser;
-
-    final skills =
-        (mentor['skills'] as List<dynamic>?)?.join(', ') ?? 'No skills listed';
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       elevation: 1,
@@ -415,18 +418,204 @@ class MentorCard extends StatelessWidget {
                 'https://placehold.co/100x100/A0C4FF/000000?text=NA',
           ),
         ),
-        title: Text(mentor['name'] ?? 'Unnamed Mentor'),
-        subtitle: Text(skills, maxLines: 1, overflow: TextOverflow.ellipsis),
+        title: Text(mentor['firstName'] ?? 'Unnamed Mentor'),
+        subtitle: Text(
+          (mentor['skills'] as List<dynamic>?)?.join(', ') ??
+              'No skills listed',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         trailing: const Icon(Icons.chevron_right),
         onTap: () {
+          // Navigate to mentor profile, passing the specific mentor's ID
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => MentorProfilePage(mentorUid: user!.uid, mentorData: {},),
+              builder:
+                  (_) => MentorProfilePage(
+                    mentorUid: mentor['id'],
+                    isNavigatedFromMentorsList: true,
+                    mentorData: {},
+                  ),
             ),
           );
         },
       ),
+    );
+  }
+}
+
+class MentorsListPage extends StatefulWidget {
+  const MentorsListPage({super.key});
+
+  @override
+  State<MentorsListPage> createState() => _MentorsListPageState();
+}
+
+class _MentorsListPageState extends State<MentorsListPage> {
+  int _selectedIndex = 1; // Set initial index to 1 for Mentors tab
+
+  // List of widgets to display for each navigation bar item
+  static final List<Widget> _pages = <Widget>[
+    const Text(
+      'Home Page',
+      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+    ),
+    _MentorsListContent(), // The content of the mentors list page
+    const Text(
+      'Booking Page',
+      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+    ),
+    const Text(
+      'Profile Page',
+      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // Handle navigation based on the selected index
+    if (index == 0) {
+      // Navigate to Home Page
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ), //changes(main screen)
+      );
+    } else if (index == 3) {
+      // Navigate to Mentor Profile Page (for the current user)
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => MentorProfilePage(
+                  mentorUid: user.uid,
+                  mentorData: {},
+                  isNavigatedFromMentorsList: true,
+                ),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Mentors')),
+      body: _pages[_selectedIndex],
+    );
+  }
+}
+
+// Separate the list content into a new StatelessWidget
+class _MentorsListContent extends StatelessWidget {
+  get user => null;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream:
+          FirebaseFirestore.instance
+              .collection('users')
+              .where('role', isEqualTo: 'mentor')
+              .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(child: Text("No mentors found."));
+        }
+
+        final mentors = snapshot.data!.docs;
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: mentors.length,
+          itemBuilder: (context, index) {
+            final mentor = mentors[index];
+            final data = mentor.data() as Map<String, dynamic>;
+
+            return Card(
+              margin: const EdgeInsets.only(bottom: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 2,
+              shadowColor: Colors.black12,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundImage: NetworkImage(
+                        data['avatar'] ??
+                            'https://placehold.co/100x100/A0C4FF/000000?text=NA',
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            data['firstName'] ?? 'No Name',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            ((data['skills'] as List<dynamic>?)?.join(', ') ??
+                                'No Skills'),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Navigate to mentor profile
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => MentorProfilePage(
+                                  mentorUid: user!.uid,
+                                  mentorData: {},
+                                  isNavigatedFromMentorsList: true,
+                                ),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text('View'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

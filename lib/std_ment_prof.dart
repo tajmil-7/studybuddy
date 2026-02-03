@@ -3,21 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:studybuddy/main.dart';
 
-class MentorProfilePage extends StatefulWidget {
+class LMentorProfilePage extends StatefulWidget {
   final String mentorUid; // UID of the mentor document
 
-  const MentorProfilePage({
+  const LMentorProfilePage({
     super.key,
     required this.mentorUid,
-    required Map<String, dynamic> mentorData,
-    required bool isNavigatedFromMentorsList,
+    required Map<String, dynamic> mentorData, required bool isNavigatedFromMentorsList,
   });
 
   @override
-  State<MentorProfilePage> createState() => _MentorProfilePageState();
+  State<LMentorProfilePage> createState() => _LMentorProfilePageState();
 }
 
-class _MentorProfilePageState extends State<MentorProfilePage> {
+class _LMentorProfilePageState extends State<LMentorProfilePage> {
   late Future<DocumentSnapshot<Map<String, dynamic>>> _mentorFuture;
 
   @override
