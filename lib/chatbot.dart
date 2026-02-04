@@ -37,13 +37,13 @@ class _ChatScreenState extends State<ChatScreen> {
     // 🚨 IMPORTANT: Do NOT hardcode your API key in the code.
     // Use environment variables. Run your app from the terminal like this:
     // flutter run --dart-define="API_KEY=YOUR_GEMINI_API_KEY"
-    const apiKey = 'AIzaSyAllpEr4MOwc4onaHo0IiZhHkjbg3-1-kA';
+    const apiKey = 'AIzaSyBuFaL5yLL9g54ZqbWrF9mL0b0GgwwM1vg';
     if (apiKey.isEmpty) {
       throw Exception('API_KEY is not set in environment variables');
     }
 
     _model = GenerativeModel(
-      model: 'gemini-1.5-flash', // A powerful and efficient model
+      model: 'gemini-3-flash-preview', // A powerful and efficient model
       apiKey: apiKey,
       systemInstruction: Content.text("""
         You are Sensai, an expert and friendly AI mentor.
@@ -274,11 +274,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                         ),
                                       ),
                                     ),
-                                  ...mentors
-                                      .map(
-                                        (mentor) => MentorCard(mentor: mentor),
-                                      )
-                                      ,
+                                  ...mentors.map(
+                                    (mentor) => MentorCard(mentor: mentor),
+                                  ),
                                 ],
                               );
                             }
